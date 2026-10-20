@@ -1,0 +1,18 @@
+transaction.py        -> simple transactions
+block.py               -> blocks , hash , merkle oot
+blockchain.py           -> genesis , chaining ,  validation ,demonstrration : all works
+
+
+add PoW(proof of work) to block.py and difficulty to blockchain.py
+
+
+main_logic.py   : a full test
+
+
+nodes.py    :Represents a blockchain node in a P2P network
+                Each node has its own blockchain copy and can communicate with other nodes
+    
+
+
+
+

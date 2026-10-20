@@ -1,0 +1,6 @@
+
+
+node.create_and_broadcast_transaction({'name1': 40}, 40)
+node.mine_block()
+node.display_status()
+node.get_balance()

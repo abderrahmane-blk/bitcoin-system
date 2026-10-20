@@ -1,0 +1,18 @@
+
+first : run the coinbase 
+> python main.py
+
+
+then  , run nodes in different shells/cmd's (wait a little between initializations)
+by>                   [name] [port]
+> python other_node.py zinou 8002
+
+now after initialization 
+u can use those commands in the cmd
+  node.create_and_broadcast_transaction({'Bob': 10}, 10)   # ({name : mount_to_send , name2 : amount2} , total_amount)
+  node.mine_block()
+  node.display_status()
+  node.get_balance()
+
+
+

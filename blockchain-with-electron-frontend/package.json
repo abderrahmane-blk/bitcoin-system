@@ -1,0 +1,21 @@
+{
+  "name": "blockchain-node-manager",
+  "version": "1.0.0",
+  "description": "Simple blockchain node manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "blockchain",
+    "electron"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  },
+  "allowScripts": {
+    "electron@28.3.3": true
+  }
+}

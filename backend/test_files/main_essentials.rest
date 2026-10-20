@@ -1,0 +1,43 @@
+### Variables
+@baseUrl = http://127.0.0.1:5000
+@receiver = Anes
+
+### ============================================
+### BASIC COMMANDS
+### ============================================
+
+### Get status
+GET {{baseUrl}}/status
+
+### Get balance
+GET {{baseUrl}}/balance/coinbase
+
+### Create transaction
+POST {{baseUrl}}/transaction/create?receiver={{receiver}}&amount=50
+
+### Mine block
+POST {{baseUrl}}/mine
+
+### Get blockchain
+GET {{baseUrl}}/chain
+
+### Get mempool
+GET {{baseUrl}}/mempool
+
+
+
+
+
+
+
+### FAUCET (give coins to new nodes) : #? ignore this one
+### ============================================
+
+### Give 100 coins to a node : example , to Alice
+POST {{baseUrl}}/faucet
+Content-Type: application/json
+
+{
+  "node_name": "{{receiver}}"
+}
+

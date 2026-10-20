@@ -1,0 +1,120 @@
+# ============================================================
+# Report files (ignored on request)
+# Matches both:
+#   Complete_Project_Report_friday(hopefully the last).pdf
+#   Complete_Project_Report_friday.md
+# ============================================================
+Complete_Project_Report_friday*
+
+# ============================================================
+# Python / FastAPI  (backend/)
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+sdist/
+wheels/
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.python-version
+
+# Environment / secrets  (keep .env.example tracked)
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Testing / linting / typing caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Local databases (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# ============================================================
+# Node / Electron  (frontend/)
+# ============================================================
+node_modules/
+.pnp
+.pnp.js
+.npm/
+.yarn/
+.pnpm-store/
+
+# Build / packaging output
+dist/
+dist-electron/
+out/
+release/
+*.asar
+.electron/
+# NOTE: `build/` is intentionally NOT ignored, because electron-builder
+# uses it for icons/resources. Uncomment the next line if you don't.
+# build/
+
+# Package-manager debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Bundler caches
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vite/
+coverage/
+
+# ============================================================
+# Editors / IDEs
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ============================================================
+# OS junk
+# ============================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini

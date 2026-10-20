@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Node Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: hsl(210, 100%, 50%);
+            --primary-dark: hsl(210, 100%, 40%);
+            --bg: #1a1a2e;
+            --card: #16213e;
+            --text: #eee;
+            --text-dim: #aaa;
+            --success: #4CAF50;
+            --error: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* URL Setup Screen */
+        .setup-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .setup-card {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .setup-card h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .setup-card p {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        .header {
+            background: var(--card);
+            padding: 20px 30px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .node-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .info-badge {
+            background: var(--bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .info-badge strong {
+            color: var(--primary);
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: var(--card);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid var(--primary);
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: var(--bg);
+            color: var(--text);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+        }
+
+        .peers-section {
+            margin-top: 30px;
+        }
+
+        .peer-item {
+            background: var(--bg);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .peer-item:hover {
+            border-color: var(--primary);
+        }
+
+        .peer-item.selected {
+            border-color: var(--primary);
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .peer-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .peer-url {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tx-form {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tx-form h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-row input {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg);
+            border: 2px solid transparent;
+            border-radius: 6px;
+            color: var(--text);
+        }
+
+        .form-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .output-section {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .output-section h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .output-item {
+            background: var(--bg);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .output-item.success {
+            border-left-color: var(--success);
+        }
+
+        .output-item.error {
+            border-left-color: var(--error);
+        }
+
+        .output-time {
+            color: var(--text-dim);
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Setup Screen -->
+        <div class="setup-screen" id="setupScreen">
+            <div class="setup-card">
+                <h1>🔗 Blockchain Node</h1>
+                <p>Connect to your blockchain node</p>
+                <div class="input-group">
+                    <label>Node URL</label>
+                    <input type="text" id="nodeUrlInput" placeholder="http://127.0.0.1:8001" value="http://127.0.0.1:8001">
+                </div>
+                <button class="btn-primary" onclick="connectNode()">Connect</button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <div class="header">
+                <h1>🔗 Blockchain Node Manager</h1>
+                <div class="node-info">
+                    <div class="info-badge"><strong>Balance:</strong> <span id="balance">0</span></div>
+                    <div class="info-badge"><strong>Blocks:</strong> <span id="blocks">0</span></div>
+                    <div class="info-badge"><strong>Peers:</strong> <span id="peersCount">0</span></div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="sidebar">
+                    <h2>Actions</h2>
+                    <!-- <button class="action-btn" onclick="getStatus()">📊 Get Status</button>
+                    <button class="action-btn" onclick="getBalance()">💰 Get Balance</button>
+                    <button class="action-btn" onclick="mineBlock()">⛏️ Mine Block</button>
+                    <button class="action-btn" onclick="getChain()">📦 Get Blockchain</button>
+                    <button class="action-btn" onclick="getMempool()">📝 Get Mempool</button> -->
+                    <button class="action-btn" onclick="getStatus()">Get Status</button>
+                    <button class="action-btn" onclick="getBalance()">Get Balance</button>
+                    <button class="action-btn" onclick="mineBlock()">Mine Block</button>
+                    <button class="action-btn" onclick="getChain()">Get Blockchain</button>
+                    <button class="action-btn" onclick="getMempool()">Get Mempool</button>
+                    <div class="peers-section">
+                        <h2>Peers</h2>
+                        <div id="peersList"></div>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div class="tx-form">
+                        <h3>Create Transaction</h3>
+                        <div id="receiversContainer">
+                            <!-- Rows will be added here -->
+                        </div>
+                        <button class="action-btn" onclick="addReceiverRow()" style="margin-bottom: 15px; width: auto; padding: 8px 16px;">+ Add Receiver</button>
+                        <button class="btn-primary" onclick="createTransaction()">Send Transaction</button>
+                    </div>
+
+                    <div class="output-section">
+                        <h3>Output</h3>
+                        <div id="outputArea"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let nodeUrl = '';
+        let selectedPeer = null;
+        let peerCheckInterval = null;
+
+        // Generate random primary color
+        const hue = Math.floor(Math.random() * 360);
+        document.documentElement.style.setProperty('--primary', `hsl(${hue}, 70%, 50%)`);
+        document.documentElement.style.setProperty('--primary-dark', `hsl(${hue}, 70%, 40%)`);
+
+        function connectNode() {
+            nodeUrl = document.getElementById('nodeUrlInput').value.trim();
+            if (!nodeUrl) {
+                alert('Please enter a node URL');
+                return;
+            }
+
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+
+            // Initial status fetch
+            getStatus();
+            
+            // Add initial receiver row
+            addReceiverRow();
+
+            // Start peer checking loop
+            peerCheckInterval = setInterval(checkPeers, 10000);
+            checkPeers();
+        }
+
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            try {
+                const options = { method };
+                if (body) {
+                    options.headers = { 'Content-Type': 'application/json' };
+                    options.body = JSON.stringify(body);
+                }
+
+                const response = await fetch(`${nodeUrl}${endpoint}`, options);
+                const data = await response.json();
+                return { success: true, data };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function addOutput(message, type = 'info') {
+            const outputArea = document.getElementById('outputArea');
+            const item = document.createElement('div');
+            item.className = `output-item ${type}`;
+            
+            const time = new Date().toLocaleTimeString();
+            item.innerHTML = `
+                <div class="output-time">${time}</div>
+                <pre>${JSON.stringify(message, null, 2)}</pre>
+            `;
+
+            outputArea.insertBefore(item, outputArea.firstChild);
+
+            // Keep only last 20 items
+            while (outputArea.children.length > 20) {
+                outputArea.removeChild(outputArea.lastChild);
+            }
+        }
+
+        async function getStatus() {
+            const result = await apiCall('/status');
+            if (result.success) {
+                addOutput(result.data, 'success');
+                document.getElementById('balance').textContent = result.data.balance || 0;
+                document.getElementById('blocks').textContent = result.data.blockchain_length || 0;
+                document.getElementById('peersCount').textContent = result.data.peers_count || 0;
+            } else {
+                addOutput({ error: result.error }, 'error');
+            }
+        }
+
+        async function getBalance() {
+            const result = await apiCall('/balance');
+            if (result.success) {
+                addOutput(result.data, 'success');
+                document.getElementById('balance').textContent = result.data.balance || 0;
+            } else {
+                addOutput({ error: result.error }, 'error');
+            }
+        }
+
+        async function mineBlock() {
+            addOutput({ status: 'Mining started...' }, 'info');
+            const result = await apiCall('/mine', 'POST');
+            if (result.success) {
+                addOutput(result.data, 'success');
+                getStatus(); // Refresh status
+            } else {
+                addOutput({ error: result.error }, 'error');
+            }
+        }
+
+        async function getChain() {
+            const result = await apiCall('/chain');
+            if (result.success) {
+                addOutput(result.data, 'success');
+            } else {
+                addOutput({ error: result.error }, 'error');
+            }
+        }
+
+        async function getMempool() {
+            const result = await apiCall('/mempool');
+            if (result.success) {
+                addOutput(result.data, 'success');
+            } else {
+                addOutput({ error: result.error }, 'error');
+            }
+        }
+
+
+        // ! broken 
+        // async function checkPeers() {
+        //    const result = await apiCall('/status');
+        //    if (result.success && result.data.peers) {
+        //        renderPeers(result.data.peers);
+        //    }
+        //} 
+
+
+        async function checkPeers() {
+            const result = await apiCall('/status');
+            if (result.success && result.data.peers) {
+                // Actually check if each peer is alive
+                const peersWithStatus = await Promise.all(
+                    result.data.peers.map(async (peer) => {
+                        try {
+                            const check = await fetch(peer.url, { 
+                                method: 'GET',
+                                signal: AbortSignal.timeout(2000) // 2 second timeout
+                            });
+                            return { ...peer, alive: check.ok };
+                        } catch {
+                            return { ...peer, alive: false };
+                        }
+                    })
+                );
+                renderPeers(peersWithStatus);
+            }
+        }
+
+
+
+
+        function renderPeers(peers) {
+            const peersList = document.getElementById('peersList');
+            peersList.innerHTML = '';
+
+            peers.forEach(peer => {
+                const item = document.createElement('div');
+                item.className = 'peer-item';
+                if (selectedPeer && selectedPeer.name === peer.name) {
+                    item.classList.add('selected');
+                }
+
+                item.innerHTML = `
+                    <div class="peer-name">${peer.name} ${peer.alive ? '🟢' : '🔴'}</div>
+                    <div class="peer-url">${peer.url}</div>
+                `;
+
+                item.onclick = () => selectPeer(peer);
+                peersList.appendChild(item);
+            });
+        }
+
+        function selectPeer(peer) {
+            selectedPeer = peer;
+            // Find the first empty receiver input or add a new one
+            const inputs = document.querySelectorAll('.receiver-name');
+            let added = false;
+            for (let input of inputs) {
+                if (!input.value) {
+                    input.value = peer.name;
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                addReceiverRow(peer.name);
+            }
+            
+            checkPeers();
+        }
+
+        function addReceiverRow(prefillName = '') {
+            const container = document.getElementById('receiversContainer');
+            const row = document.createElement('div');
+            row.className = 'form-row';
+            row.innerHTML = `
+                <input type="text" class="receiver-name" placeholder="Receiver name" value="${prefillName}">
+                <input type="number" class="receiver-amount" placeholder="Amount" value="10">
+                <button class="action-btn" style="width: auto; padding: 0 15px; border-color: var(--error); color: var(--error);" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(row);
+        }
+
+        async function createTransaction() {
+            const nameInputs = document.querySelectorAll('.receiver-name');
+            const amountInputs = document.querySelectorAll('.receiver-amount');
+            
+            const receivers = {};
+            let totalAmount = 0;
+            let hasError = false;
+
+            nameInputs.forEach((input, index) => {
+                const name = input.value.trim();
+                const amount = parseFloat(amountInputs[index].value);
+
+                if (name && !isNaN(amount) && amount > 0) {
+                    if (receivers[name]) {
+                        receivers[name] += amount;
+                    } else {
+                        receivers[name] = amount;
+                    }
+                    totalAmount += amount;
+                } else if (name || amount > 0) { // Only error if partially filled
+                     hasError = true;
+                }
+            });
+
+            if (Object.keys(receivers).length === 0) {
+                addOutput({ error: 'Please add at least one valid receiver and amount' }, 'error');
+                return;
+            }
+            
+            if (hasError) {
+                 addOutput({ error: 'Some rows were invalid and skipped' }, 'error');
+            }
+
+            const queryParams = new URLSearchParams({ amount: totalAmount });
+            // Send receivers in body
+            const result = await apiCall(`/transaction/create?${queryParams.toString()}`, 'POST', receivers);
+            
+            if (result.success) {
+                addOutput(result.data, 'success');
+                getStatus(); // Refresh status
+                document.getElementById('receiversContainer').innerHTML = '';
+                addReceiverRow(); 
+            } else {
+                addOutput({ error: result.error }, 'error');
+            }
+        }
+
+        // Cleanup on close
+        window.addEventListener('beforeunload', () => {
+            if (peerCheckInterval) clearInterval(peerCheckInterval);
+        });
+    </script>
+</body>
+</html>

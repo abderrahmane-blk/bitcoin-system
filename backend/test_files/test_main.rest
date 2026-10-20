@@ -1,0 +1,172 @@
+### Variables
+@baseUrl = http://127.0.0.1:5000
+@nodeName = coinbase
+
+### ============================================
+### BASIC INFO ENDPOINTS
+### ============================================
+
+### Get home/basic info
+GET {{baseUrl}}/
+
+### Get coinbase status
+GET {{baseUrl}}/status
+
+### Get coinbase balance
+GET {{baseUrl}}/balance/coinbase
+
+### Get all registered peers
+GET {{baseUrl}}/peers
+
+### Get full blockchain
+GET {{baseUrl}}/chain
+
+### Get mempool (pending transactions)
+GET {{baseUrl}}/mempool
+
+### ============================================
+### TRANSACTION ENDPOINTS
+### ============================================
+
+### Create transaction: coinbase → Alice (50 coins)
+POST {{baseUrl}}/transaction/create?receiver=Alice&amount=50
+
+### Create transaction: coinbase → Bob (30 coins)
+POST {{baseUrl}}/transaction/create?receiver=Bob&amount=30
+
+### Create transaction: coinbase → Charlie (20 coins)
+POST {{baseUrl}}/transaction/create?receiver=Charlie&amount=20
+
+### ============================================
+### MINING ENDPOINTS
+### ============================================
+
+### Mine a block (coinbase)
+POST {{baseUrl}}/mine
+
+### ============================================
+### FAUCET ENDPOINT
+### ============================================
+
+### Request funds from faucet for Alice
+POST {{baseUrl}}/faucet
+Content-Type: application/json
+
+{
+  "node_name": "Alice"
+}
+
+### Request funds from faucet for Bob
+POST {{baseUrl}}/faucet
+Content-Type: application/json
+
+{
+  "node_name": "Bob"
+}
+
+### Request funds from faucet for Charlie
+POST {{baseUrl}}/faucet
+Content-Type: application/json
+
+{
+  "node_name": "Charlie"
+}
+
+### ============================================
+### PEER REGISTRATION (used by other nodes)
+### ============================================
+
+### Register a new peer (example - normally done by other_node.py automatically)
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "name": "TestNode",
+  "port": 9000,
+  "uuid": "test-uuid-12345",
+  "host": "127.0.0.1"
+}
+
+### ============================================
+### RECEIVE ENDPOINTS (used by network)
+### ============================================
+
+### Receive a transaction (example - normally done by other nodes)
+POST {{baseUrl}}/receive_transaction
+Content-Type: application/json
+
+{
+  "sender": "Alice",
+  "receiver": "Bob",
+  "amount": 15,
+  "timestamp": 1234567890.123
+}
+
+### Receive a block (example - normally done by other nodes)
+POST {{baseUrl}}/receive_block
+Content-Type: application/json
+
+{
+  "index": 5,
+  "timestamp": 1234567890.123,
+  "transactions": [
+    {
+      "sender": "Alice",
+      "receiver": "Bob",
+      "amount": 10,
+      "timestamp": 1234567890.123
+    }
+  ],
+  "previous_hash": "previous_hash_here",
+  "nonce": 12345,
+  "hash": "block_hash_here",
+  "merkle_root": "merkle_root_here"
+}
+
+### ============================================
+### WORKFLOW EXAMPLES
+### ============================================
+
+### WORKFLOW 1: Send funds to Alice and let her mine
+# Step 1: Request faucet for Alice
+POST {{baseUrl}}/faucet
+Content-Type: application/json
+
+{
+  "node_name": "Alice"
+}
+
+###
+# Step 2: Mine the block (do this on Alice's node at port 8001)
+# See test_node.rest for Alice
+
+### WORKFLOW 2: Coinbase sends money and mines
+# Step 1: Create transaction
+POST {{baseUrl}}/transaction/create?receiver=Bob&amount=25
+
+###
+# Step 2: Mine the block
+POST {{baseUrl}}/mine
+
+###
+# Step 3: Check status
+GET {{baseUrl}}/status
+
+### ============================================
+### DEBUGGING / MONITORING
+### ============================================
+
+### Check blockchain length
+GET {{baseUrl}}/chain
+
+### Check pending transactions
+GET {{baseUrl}}/mempool
+
+### Check all peer connections
+GET {{baseUrl}}/peers
+
+### Check specific node balance
+GET {{baseUrl}}/balance/Alice
+
+### Check another node balance
+GET {{baseUrl}}/balance/Bob

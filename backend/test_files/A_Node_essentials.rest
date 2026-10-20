@@ -1,0 +1,30 @@
+### Variables - Change these for different nodes
+@nodeUrl = http://127.0.0.1:8001
+@nodeName = Anes
+@receiver = Yasser
+# For Bob use: http://127.0.0.1:8002
+# For Charlie use: http://127.0.0.1:8003
+
+### ============================================
+### BASIC COMMANDS
+### ============================================
+
+### Get status
+GET {{nodeUrl}}/status
+
+### Get balance
+GET {{nodeUrl}}/balance
+
+
+
+### Create transaction (node → receiver, 10 coins)
+POST {{nodeUrl}}/transaction/create?receiver={{receiver}}&amount=10
+
+### Mine block
+POST {{nodeUrl}}/mine
+
+### Get blockchain
+GET {{nodeUrl}}/chain
+
+### Get mempool
+GET {{nodeUrl}}/mempool

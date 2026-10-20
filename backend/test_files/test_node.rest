@@ -1,0 +1,267 @@
+### Variables - ALICE
+@aliceUrl = http://127.0.0.1:8001
+@aliceName = Alice
+
+### Variables - BOB
+@bobUrl = http://127.0.0.1:8002
+@bobName = Bob
+
+### Variables - CHARLIE
+@charlieUrl = http://127.0.0.1:8003
+@charlieName = Charlie
+
+### ============================================
+### ALICE - BASIC INFO ENDPOINTS (PORT 8001)
+### ============================================
+
+### Get Alice home/basic info
+GET {{aliceUrl}}/
+
+### Get Alice full status
+GET {{aliceUrl}}/status
+
+### Get Alice balance
+GET {{aliceUrl}}/balance
+
+### Get Alice blockchain
+GET {{aliceUrl}}/chain
+
+### Get Alice mempool
+GET {{aliceUrl}}/mempool
+
+### Get Alice node info
+GET {{aliceUrl}}/info
+
+### ============================================
+### ALICE - TRANSACTION ENDPOINTS
+### ============================================
+
+### Alice → Bob (10 coins)
+POST {{aliceUrl}}/transaction/create?receiver=Bob&amount=10
+
+### Alice → Charlie (15 coins)
+POST {{aliceUrl}}/transaction/create?receiver=Charlie&amount=15
+
+### Alice → coinbase (5 coins)
+POST {{aliceUrl}}/transaction/create?receiver=coinbase&amount=5
+
+### ============================================
+### ALICE - MINING
+### ============================================
+
+### Alice mines a block
+POST {{aliceUrl}}/mine
+
+### ============================================
+### BOB - BASIC INFO ENDPOINTS (PORT 8002)
+### ============================================
+
+### Get Bob home/basic info
+GET {{bobUrl}}/
+
+### Get Bob full status
+GET {{bobUrl}}/status
+
+### Get Bob balance
+GET {{bobUrl}}/balance
+
+### Get Bob blockchain
+GET {{bobUrl}}/chain
+
+### Get Bob mempool
+GET {{bobUrl}}/mempool
+
+### Get Bob node info
+GET {{bobUrl}}/info
+
+### ============================================
+### BOB - TRANSACTION ENDPOINTS
+### ============================================
+
+### Bob → Alice (20 coins)
+POST {{bobUrl}}/transaction/create?receiver=Alice&amount=20
+
+### Bob → Charlie (8 coins)
+POST {{bobUrl}}/transaction/create?receiver=Charlie&amount=8
+
+### Bob → coinbase (3 coins)
+POST {{bobUrl}}/transaction/create?receiver=coinbase&amount=3
+
+### ============================================
+### BOB - MINING
+### ============================================
+
+### Bob mines a block
+POST {{bobUrl}}/mine
+
+### ============================================
+### CHARLIE - BASIC INFO ENDPOINTS (PORT 8003)
+### ============================================
+
+### Get Charlie home/basic info
+GET {{charlieUrl}}/
+
+### Get Charlie full status
+GET {{charlieUrl}}/status
+
+### Get Charlie balance
+GET {{charlieUrl}}/balance
+
+### Get Charlie blockchain
+GET {{charlieUrl}}/chain
+
+### Get Charlie mempool
+GET {{charlieUrl}}/mempool
+
+### Get Charlie node info
+GET {{charlieUrl}}/info
+
+### ============================================
+### CHARLIE - TRANSACTION ENDPOINTS
+### ============================================
+
+### Charlie → Alice (12 coins)
+POST {{charlieUrl}}/transaction/create?receiver=Alice&amount=12
+
+### Charlie → Bob (7 coins)
+POST {{charlieUrl}}/transaction/create?receiver=Bob&amount=7
+
+### Charlie → coinbase (4 coins)
+POST {{charlieUrl}}/transaction/create?receiver=coinbase&amount=4
+
+### ============================================
+### CHARLIE - MINING
+### ============================================
+
+### Charlie mines a block
+POST {{charlieUrl}}/mine
+
+### ============================================
+### NETWORK RECEIVE ENDPOINTS (all nodes have these)
+### ============================================
+
+### Alice receives transaction
+POST {{aliceUrl}}/receive_transaction
+Content-Type: application/json
+
+{
+  "sender": "Bob",
+  "receiver": "Alice",
+  "amount": 5,
+  "timestamp": 1234567890.123
+}
+
+### Bob receives block
+POST {{bobUrl}}/receive_block
+Content-Type: application/json
+
+{
+  "index": 5,
+  "timestamp": 1234567890.123,
+  "transactions": [
+    {
+      "sender": "Alice",
+      "receiver": "Bob",
+      "amount": 10,
+      "timestamp": 1234567890.123
+    }
+  ],
+  "previous_hash": "previous_hash_here",
+  "nonce": 12345,
+  "hash": "block_hash_here",
+  "merkle_root": "merkle_root_here"
+}
+
+### Charlie receives new peer notification
+POST {{charlieUrl}}/new_peer
+Content-Type: application/json
+
+{
+  "name": "NewNode",
+  "uuid": "new-uuid-12345",
+  "host": "127.0.0.1",
+  "port": 9000,
+  "url": "http://127.0.0.1:9000"
+}
+
+### ============================================
+### COMPLETE WORKFLOW EXAMPLES
+### ============================================
+
+### WORKFLOW 1: Alice gets funds and sends to Bob
+# Step 1: Request faucet (on coinbase - see test_main.rest)
+# POST http://127.0.0.1:5000/faucet with {"node_name": "Alice"}
+
+###
+# Step 2: Alice mines the faucet transaction
+POST {{aliceUrl}}/mine
+
+###
+# Step 3: Check Alice's balance
+GET {{aliceUrl}}/balance
+
+###
+# Step 4: Alice sends 30 to Bob
+POST {{aliceUrl}}/transaction/create?receiver=Bob&amount=30
+
+###
+# Step 5: Bob mines the transaction
+POST {{bobUrl}}/mine
+
+###
+# Step 6: Check both balances
+GET {{aliceUrl}}/balance
+###
+GET {{bobUrl}}/balance
+
+### WORKFLOW 2: Multi-node transaction chain
+# Alice → Bob → Charlie
+
+###
+# Step 1: Alice → Bob (25 coins)
+POST {{aliceUrl}}/transaction/create?receiver=Bob&amount=25
+
+###
+# Step 2: Alice mines
+POST {{aliceUrl}}/mine
+
+###
+# Step 3: Bob → Charlie (10 coins)
+POST {{bobUrl}}/transaction/create?receiver=Charlie&amount=10
+
+###
+# Step 4: Charlie mines
+POST {{charlieUrl}}/mine
+
+###
+# Step 5: Check all balances
+GET {{aliceUrl}}/balance
+###
+GET {{bobUrl}}/balance
+###
+GET {{charlieUrl}}/balance
+
+### ============================================
+### MONITORING ALL NODES
+### ============================================
+
+### Check all node statuses
+GET {{aliceUrl}}/status
+###
+GET {{bobUrl}}/status
+###
+GET {{charlieUrl}}/status
+
+### Check all mempools
+GET {{aliceUrl}}/mempool
+###
+GET {{bobUrl}}/mempool
+###
+GET {{charlieUrl}}/mempool
+
+### Check all blockchain lengths
+GET {{aliceUrl}}/chain
+###
+GET {{bobUrl}}/chain
+###
+GET {{charlieUrl}}/chain

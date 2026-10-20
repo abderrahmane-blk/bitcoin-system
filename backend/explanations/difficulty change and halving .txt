@@ -1,0 +1,34 @@
+Here’s the short, clear answer you need for your project and future questions:
+1. Does difficulty change over time?
+YES – and it MUST change.
+In real Bitcoin (and almost all PoW blockchains), the difficulty is automatically adjusted every 2016 blocks (~2 weeks) so that a new block is found every ~10 minutes on average, no matter how much total computing power (hashrate) the network has.
+→ If more miners join → blocks would be found too fast → difficulty increases.
+→ If miners leave → difficulty decreases.
+In your current code, difficulty is fixed (e.g. 4). That’s perfect for the mini-project, but in a real distributed consensus you would add a adjust_difficulty() method.
+2. What is halving?
+Halving is completely different from difficulty.
+
+Halving = the block reward (new coins created per block) is cut in half every 210 000 blocks (~4 years).
+2009– 2009–2012 → 50 BTC per block
+– 2012–2016 → 25 BTC
+– 2016–2020 → 12.5 BTC
+– 2020–2024 → 6.25 BTC
+– 2024–2028 → 3.125 BTC → and so on until ~2140 (21 million cap).
+Halving controls inflation.
+Difficulty controls block time (10 minutes).
+
+They are two separate mechanisms.
+Summary table (very useful for your report or oral defense):
+
+
+ConceptWhat it controlsChanges every …GoalDifficultyNumber of leading zeros required~2016 blocks (2 weeks)Keep block time ≈ 10 minutesHalvingMiner reward (new coins)210 000 blocks (4 yrs)Control total supply (21 M cap)
+
+# ^ this line is a table
+
+
+
+For your ALDA project right now → keep difficulty fixed (3 or 4 is more than enough), you don’t need to implement adjustment or halving.
+But if the teacher asks “can difficulty change?” you can confidently say:
+“Yes, in real networks it is recalculated every 2016 blocks to maintain constant block time.”
+That’s it. You’re good.
+Ready for the next step whenever you are (wallets → signatures → nodes → consensus distribué). Just say go.
